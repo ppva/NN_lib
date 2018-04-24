@@ -55,15 +55,8 @@ def softmax(x):
     return e
 
 
-def softmaxdx( a):
-    #@stackoverflow
-    return [np.diag(e) for e in a[..., None, :] * (np.eye(a.shape[-1], dtype=a.dtype) -
-                              a[..., None])]
-
-
 activations = dict()
 activations["linear"] = Activation(linear, lineardxf)
 activations["sigmoid"] = Activation(sigmoid, sigmoddxf)
 activations["tanh"] = Activation(tanh, tanhdx)
-activations["softmax"] = Activation(softmax, softmaxdx)
 activations["relu"] = Activation(relu, reludx)
