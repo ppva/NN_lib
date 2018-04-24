@@ -54,9 +54,17 @@ def softmax(x):
     e[e < 1e-10] = 1e-10
     return e
 
+def softmaxdx(x):
+    res = []
+    for i in range(0,len(x)):
+        s = x[i].reshape(-1,1)
+        r = np.diagflat(s) - np.dot(s, s.T)
+        res.append(r)
+    return np.array(res)
 
 activations = dict()
 activations["linear"] = Activation(linear, lineardxf)
 activations["sigmoid"] = Activation(sigmoid, sigmoddxf)
 activations["tanh"] = Activation(tanh, tanhdx)
+activations["softmax"] = Activation(softmax, softmaxdx)
 activations["relu"] = Activation(relu, reludx)

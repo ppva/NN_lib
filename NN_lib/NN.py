@@ -76,12 +76,20 @@ class NeuralNetwork:
             #Calculate the error on the last layer
             if i == (len(self.layers) - 1):
                 e = self.loss_func.dxf(real, prediction)
-                err = logi * e
+                if (len(logi.shape)==3): #Need to consider full jacobian
+                    err = ([np.dot(e[sam],logi[sam].T) for sam in range(len(logi))])
+                else:
+                    err = (e*logi)
+                #err = (np.dot(e,logi))
             #Calculate the error on the hidden layers
             # the error is equal to the derivative of the activation
             # at current layer * (weights*(error at next layer))
             else:
-                err = logi * np.dot(err, self.layers[i + 1].W[:, 1:])
+                if (len(logi.shape)==3): #Need to consider full jacobian
+                    perr = np.dot(err, self.layers[i + 1].W[:, 1:])
+                    err = ([np.dot(perr[sam], logi[sam].T) for sam in range(len(logi))])
+                else:
+                    err = logi * np.dot(err, self.layers[i + 1].W[:, 1:])
 
             #Get the last piece to calculate the gradient, that is the
             #output of the previous layer or the input value for the first
